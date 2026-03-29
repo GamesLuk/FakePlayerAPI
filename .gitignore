@@ -1,0 +1,32 @@
+# Gradle
+.gradle/
+build/
+build.gradle.kts.old
+gradle-app.setting
+
+# IDEs
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# Fabric / Loom
+run/
+.fabric/
+logs/
+crash-reports/
+
+# Mac / Windows / Linux
+.DS_Store
+Thumbs.db
