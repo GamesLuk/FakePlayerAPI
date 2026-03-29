@@ -2,6 +2,11 @@
 
 Diese Mod bietet eine API zum Spawnen und Verwalten von Fake-Spielern auf Fabric-Servern. Die Fake-Spieler verhalten sich nach dem Spawnen passiv in einer "Superposition" (werden nicht getickt oder in die Welt geladen), erscheinen aber voll funktionsfähig in der Tabliste und werden auch von z.B. LuckPerms korrekt für Berechtigungen erkannt.
 
+## Herkunft des Codes (Danksagung)
+Die interne Kernlogik für das Spawnen der Fake-Spieler (`EntityPlayerMPFake.java` etc.) basiert in weiten Teilen auf dem Code der exzellenten [Carpet Mod](https://github.com/gnembon/fabric-carpet) von gnembon. 
+Die Modifikation, Entkopplung vom Bewegungssystem und Anpassung für die reine API-Nutzung wurde gesondert durchgeführt. 
+Weitere Informationen zu den Bestimmungen des Originalcodes von gnembon findest du in der beiliegenden Datei [`CARPET_LICENSE.txt`](CARPET_LICENSE.txt) (MIT License).
+
 ## Optionale Einbindung in andere Mods (Soft-Dependency)
 
 Wenn du diese API in einer anderen Mod verwenden möchtest, **ohne** sie als feste Abhängigkeit in deiner `build.gradle` einzutragen, kannst du **Java Reflection** nutzen.
@@ -60,4 +65,3 @@ public class FakePlayerBridge {
     }
 }
 ```
-
