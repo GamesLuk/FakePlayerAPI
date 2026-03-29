@@ -31,15 +31,17 @@ public class Main implements ModInitializer {
                         .executes(context -> {
                             var source = context.getSource();
                             var server = source.getServer();
+                            var pos = source.getPosition();       // Spawns exactly where the executor stands
+                            var level = source.getLevel();
 
                             String name = StringArgumentType.getString(context, "name");
 
                             boolean success = FakePlayerAPI.spawnFakePlayer(server, name);
 
                             if (success) {
-                                source.sendSuccess(() -> Component.literal("Fake-Spieler " + name + " erfolgreich gespawnt!"), false);
+                                source.sendSuccess(() -> Component.literal("Fake player " + name + " spawned successfully!"), false);
                             } else {
-                                source.sendFailure(Component.literal("Fehler beim Spawnen. Ist der Spieler schon da?"));
+                                source.sendFailure(Component.literal("Failed to spawn. Is the player already online?"));
                             }
 
                             return 1;
@@ -65,11 +67,11 @@ public class Main implements ModInitializer {
 
                             boolean success = FakePlayerAPI.deleteFakePlayer(server, name);
                             if (success) {
-                                source.sendSuccess(() -> Component.literal("Fake-Spieler " + name + " wurde entfernt."), false);
+                                source.sendSuccess(() -> Component.literal("Fake player " + name + " has been removed."), false);
                                 return 1;
                             }
 
-                            source.sendFailure(Component.literal("Konnte Fake-Spieler " + name + " nicht entfernen (nicht online, kein Fake oder gerade am Spawnen)."));
+                            source.sendFailure(Component.literal("Could not remove fake player " + name + " (not online, not a fake player, or currently spawning)."));
                             return 0;
                         })
                     )
@@ -89,9 +91,9 @@ public class Main implements ModInitializer {
 
                             boolean isFake = FakePlayerAPI.isFake(server, name);
                             if (isFake) {
-                                source.sendSuccess(() -> Component.literal(name + " ist ein Fake-Spieler!"), false);
+                                source.sendSuccess(() -> Component.literal(name + " is a fake player!"), false);
                             } else {
-                                source.sendSuccess(() -> Component.literal(name + " ist KEIN Fake-Spieler (oder nicht online)."), false);
+                                source.sendSuccess(() -> Component.literal(name + " is NOT a fake player (or not online)."), false);
                             }
 
                             return 1;

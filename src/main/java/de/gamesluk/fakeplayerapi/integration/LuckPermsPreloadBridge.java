@@ -12,8 +12,8 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Soft-Dependency auf LuckPerms: laedt User-Daten vor dem Fake-Login,
- * ohne eine harte Compile-Abhaengigkeit zum LuckPerms-API-Artefakt.
+ * Soft-dependency on LuckPerms: pre-loads user data before the fake login,
+ * without requiring a hard compile dependency on the LuckPerms API artifact.
  */
 public final class LuckPermsPreloadBridge {
     private static final Logger LOGGER = LoggerFactory.getLogger(LuckPermsPreloadBridge.class);
@@ -92,5 +92,3 @@ public final class LuckPermsPreloadBridge {
         }
     }
 }
-
-

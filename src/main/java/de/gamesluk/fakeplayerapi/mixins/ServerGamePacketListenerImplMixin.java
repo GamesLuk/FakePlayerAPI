@@ -11,8 +11,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+/**
+ * Suppresses the default logout/disconnect message for fake players.
+ */
 @Mixin(ServerGamePacketListenerImpl.class)
-public abstract class ServerGamePacketListenerImplMixin {
+public class ServerGamePacketListenerImplMixin {
     @Shadow public ServerPlayer player;
 
     @WrapOperation(

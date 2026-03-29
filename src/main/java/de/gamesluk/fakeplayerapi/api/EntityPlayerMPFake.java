@@ -43,9 +43,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Abgespeckte Version von EntityPlayerMPFake.
- * Alles bezogen auf Movement (ActionPack), Riding und spezielle Carpet-Settings wurde entfernt.
- * Das Wichtigste bleibt erhalten: Das Login-Verhalten, damit der Spieler geladen wird.
+ * Stripped-down version of EntityPlayerMPFake.
+ * Everything related to movement (ActionPack), riding, and special Carpet settings has been removed.
+ * The most important part remains: the login behavior, which ensures the player gets loaded properly.
  */
 public class EntityPlayerMPFake extends ServerPlayer {
 
@@ -66,7 +66,7 @@ public class EntityPlayerMPFake extends ServerPlayer {
         UUID uuid = OldUsersConverter.convertMobOwnerIfNecessary(server, username);
 
         if (uuid == null) {
-            // Im Standard immer Offline-Spawning erlauben:
+            // Always allow offline spawning by default
             server.services().nameToIdCache().resolveOfflineUsers(server.isDedicatedServer() && server.usesAuthentication());
             uuid = UUIDUtil.createOfflinePlayerUUID(username);
         }
@@ -89,10 +89,10 @@ public class EntityPlayerMPFake extends ServerPlayer {
 
                 EntityPlayerMPFake instance = new EntityPlayerMPFake(server, worldIn, current, ClientInformation.createDefault());
                 instance.fixStartingPosition = () -> instance.snapTo(pos.x, pos.y, pos.z, (float) yaw, (float) pitch);
-                // Muss vor placeNewPlayer gesetzt sein, damit die Tablist den HAT/Second-Layer-Status direkt kennt.
+                // Must be set before placeNewPlayer so that the tab list directly knows the HAT/second-layer status
                 instance.entityData.set(DATA_PLAYER_MODE_CUSTOMISATION, (byte) 0x7f);
 
-                // Verbindung simulieren und in PlayerList eintragen
+                // Simulate connection and register in PlayerList
                 server.getPlayerList().placeNewPlayer(new FakeClientConnection(PacketFlow.SERVERBOUND), instance, new CommonListenerCookie(current, 0, instance.clientInformation(), false));
 
                 loadPlayerData(instance);
@@ -101,8 +101,8 @@ public class EntityPlayerMPFake extends ServerPlayer {
                 instance.setHealth(20.0F);
                 instance.unsetRemoved();
 
-                // Entferne den Spieler direkt aus dem Level-Tracker, 
-                // sodass er vom Server & von anderen Spielern in der Welt komplett ignoriert wird ("Superposition").
+                // Remove the player directly from the level tracker
+                // so they are completely ignored by the server & other players in the world ("Superposition").
                 instance.remove(RemovalReason.DISCARDED);
 
                 instance.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(0.6F);
@@ -187,17 +187,17 @@ public class EntityPlayerMPFake extends ServerPlayer {
 
     @Override
     public void tick() {
-        // Ticking komplett deaktiviert (braucht keine Performance mehr)
+        // Ticking completely disabled (saves performance)
     }
 
     @Override
     public void doTick() {
-        // Deaktiviert
+        // Disabled
     }
     
     @Override
     public void baseTick() {
-        // Deaktiviert
+        // Disabled
     }
     
     @Override
@@ -215,7 +215,7 @@ public class EntityPlayerMPFake extends ServerPlayer {
 
     @Override
     public boolean allowsListing() {
-        // WICHTIG: True zurückgeben, damit der Spieler im Tab-Menü auftaucht!
+        // IMPORTANT: Return true so the player shows up in the tab menu!
         return true; 
     }
 

@@ -1,21 +1,21 @@
 # FakePlayerAPI
 
-Diese Mod bietet eine API zum Spawnen und Verwalten von Fake-Spielern auf Fabric-Servern. Die Fake-Spieler verhalten sich nach dem Spawnen passiv in einer "Superposition" (werden nicht getickt oder in die Welt geladen), erscheinen aber voll funktionsfähig in der Tabliste und werden auch von z.B. LuckPerms korrekt für Berechtigungen erkannt.
+This mod provides an API to spawn and manage fake players on Fabric servers. Upon spawning, fake players behave passively in a "superposition" (they are neither ticked nor loaded into the world), but they appear fully functional in the tab list and are correctly recognized for permissions by plugins like LuckPerms.
 
-## Herkunft des Codes (Danksagung)
-Die interne Kernlogik für das Spawnen der Fake-Spieler (`EntityPlayerMPFake.java` etc.) basiert in weiten Teilen auf dem Code der exzellenten [Carpet Mod](https://github.com/gnembon/fabric-carpet) von gnembon. 
-Die Modifikation, Entkopplung vom Bewegungssystem und Anpassung für die reine API-Nutzung wurde gesondert durchgeführt. 
-Weitere Informationen zu den Bestimmungen des Originalcodes von gnembon findest du in der beiliegenden Datei [`CARPET_LICENSE.txt`](CARPET_LICENSE.txt) (MIT License).
+## Code Origin (Credits)
+The internal core logic for spawning fake players (`EntityPlayerMPFake.java`, etc.) is largely based on the code from the excellent [Carpet Mod](https://github.com/gnembon/fabric-carpet) by gnembon. 
+The modifications, decoupling from the movement system, and adaptations for pure API usage were done separately. 
+More information regarding the terms of gnembon's original code can be found in the attached [`CARPET_LICENSE.txt`](CARPET_LICENSE.txt) (MIT License).
 
-## Optionale Einbindung in andere Mods (Soft-Dependency)
+## Optional Integration into Other Mods (Soft-Dependency)
 
-Wenn du diese API in einer anderen Mod verwenden möchtest, **ohne** sie als feste Abhängigkeit in deiner `build.gradle` einzutragen, kannst du **Java Reflection** nutzen.
+If you want to use this API in another mod **without** making it a hard dependency in your `build.gradle`, you can use **Java Reflection**.
 
-Dadurch wird die FakePlayerAPI zu einer reinen optionalen Erweiterung: Wenn ein Server-Besitzer deine Mod und zusätzlich die FakePlayerAPI installiert, können die Funktionen genutzt werden. Wenn die FakePlayerAPI fehlt, läuft dein Server trotzdem zu 100% ohne Crashes weiter.
+This turns the FakePlayerAPI into a purely optional extension: If a server owner installs your mod alongside the FakePlayerAPI, the features can be used. If the FakePlayerAPI is missing, your server will continue to run at 100% functionality without any crashes.
 
-### Beispiel für eine Bridge-Klasse (Reflection)
+### Example for a Bridge Class (Reflection)
 
-Erstelle einfach eine Utility-Klasse in deinem anderen Projekt und nutze diese, um sicher auf die FakePlayerAPI zuzugreifen:
+Simply create a utility class in your other project and use it to safely access the FakePlayerAPI:
 
 ```java
 import net.fabricmc.loader.api.FabricLoader;
@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 
 public class FakePlayerBridge {
 
-    // Prüft einmalig, ob die Mod auf dem Server vorhanden ist
+    // Checks once if the mod is present on the server
     private static final boolean IS_LOADED = FabricLoader.getInstance().isModLoaded("fakeplayerapi");
 
     public static boolean spawnFake(MinecraftServer server, String username) {

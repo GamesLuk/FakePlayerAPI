@@ -24,7 +24,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 /**
- * Dieses Mixin hookt die Fake Player in die Standard-Minecraft-Netzwerk- und Login-Pfäde ein.
+ * This mixin hooks the fake players into the standard Minecraft network and login paths.
  */
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {

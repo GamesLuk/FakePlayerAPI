@@ -15,55 +15,55 @@ import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
 
 /**
- * Kern-API Klasse zum einfachen Spawnen und Verwalten von Fake Playern.
- * Basiert auf der Logik aus PlayerCommand.java.
+ * Core API class for easily spawning and managing fake players.
+ * Based on logic from PlayerCommand.java.
  */
 public class FakePlayerAPI {
 
     /**
-     * Spawnt einen neuen Fake Player an einer unsichtbaren Standard-Position 
-     * (Positionsdaten und Gamemode sind nicht mehr relevant, da der Spieler in einer Superposition existiert und nicht getickt wird).
+     * Spawns a new fake player at an invisible default position
+     * (Positional data and gamemode are irrelevant, as the player exists in a superposition and is not being ticked).
      * 
-     * @param server Der Minecraft Server.
-     * @param username Der Name des Spielers (online oder offline).
-     * @return true, falls das Spawnen initiiert wurde, false wenn der Name ungültig ist.
+     * @param server The Minecraft Server.
+     * @param username The name of the player (online or offline).
+     * @return true if the spawning process gets initiated, false if the name is already taken or invalid.
      */
     public static boolean spawnFakePlayer(MinecraftServer server, String username) {
         PlayerList manager = server.getPlayerList();
 
-        // 1. Prüfungen (Ist er schon da oder loggt gerade ein?)
+        // 1. Checks (Is the player already there or currently logging in?)
         if (EntityPlayerMPFake.isSpawningPlayer(username)) {
-            // Spieler lädt bereits
+            // Player is already loading
             return false;
         }
         if (manager.getPlayerByName(username) != null) {
-            // Spieler ist bereits online
+            // Player is already online
             return false;
         }
 
-        // 2. UUID und GameProfile herausfinden (Online/Offline Mode Support)
+        // 2. Resolve UUID and GameProfile (Online/Offline Mode Support)
         UUID uuid = OldUsersConverter.convertMobOwnerIfNecessary(server, username);
         if (uuid == null) {
-            // Offline-Mode: Fallback auf Offline UUID
+            // Offline-Mode: Fallback to an offline UUID
             server.services().nameToIdCache().resolveOfflineUsers(server.isDedicatedServer() && server.usesAuthentication());
             uuid = UUIDUtil.createOfflinePlayerUUID(username);
         }
         
         if (uuid == null) {
-            return false; // Keine UUID generierbar
+            return false; // Could not generate a UUID
         }
 
-        // 3. Fake Player erzeugen (delegate an die Core-Klasse)
-        // Hardcodierte Werte für Position, Dimension und Gamemode.
+        // 3. Create the fake player (delegate to the core class)
+        // Hardcoded values for position, dimension, and gamemode.
         return EntityPlayerMPFake.createFake(username, server, Vec3.ZERO, 0, 0, Level.OVERWORLD, GameType.SURVIVAL, false);
     }
 
     /**
-     * Entfernt einen bereits gespawnten Fake Player per Name.
+     * Removes an already spawned fake player by name.
      *
-     * @param server Der Minecraft Server.
-     * @param username Der zu entfernende Spielername.
-     * @return true, wenn ein Fake Player gefunden und entfernt wurde.
+     * @param server The Minecraft Server.
+     * @param username The name of the player to remove.
+     * @return true if a fake player was found and successfully removed.
      */
     public static boolean deleteFakePlayer(MinecraftServer server, String username) {
         if (EntityPlayerMPFake.isSpawningPlayer(username)) {
@@ -75,16 +75,16 @@ public class FakePlayerAPI {
             return false;
         }
 
-        fakePlayer.kill(Component.literal("Fake-Spieler entfernt."));
+        fakePlayer.kill(Component.literal("Fake player removed."));
         return true;
     }
 
     /**
-     * Prüft, ob ein gegebener Spieler ein Fake Player ist.
+     * Checks whether a given player is a fake player.
      *
-     * @param server Der Minecraft Server.
-     * @param username des zu überprüfende Spielers
-     * @return true, wenn es sich um einen Fake Player handelt, sonst false
+     * @param server The Minecraft Server.
+     * @param username The name of the player to check.
+     * @return true if it is a fake player, false otherwise.
      */
     public static boolean isFake(MinecraftServer server, String username) {
         ServerPlayer player = server.getPlayerList().getPlayerByName(username);

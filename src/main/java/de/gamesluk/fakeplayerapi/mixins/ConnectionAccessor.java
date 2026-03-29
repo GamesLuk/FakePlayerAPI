@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 /**
- * Dieses Mixin ist notwendig, damit wir in der FakeClientConnection
- * den EmbeddedChannel injizieren können, ohne eine IllegalArgumentException
- * von Netty oder dem Server zu erhalten.
+ * This mixin is required so we can inject the EmbeddedChannel
+ * into the FakeClientConnection without throwing an 
+ * IllegalArgumentException from Netty or the server.
  */
 @Mixin(Connection.class)
 public interface ConnectionAccessor {
