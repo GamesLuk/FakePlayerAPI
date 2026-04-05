@@ -2,8 +2,12 @@ package de.gamesluk.fakeplayerapi;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.gamesluk.fakeplayerapi.api.FakePlayerAPI;
+import de.gamesluk.fakeplayerapi.api.PlayerConnectionHadler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
@@ -21,6 +25,9 @@ public class Main implements ModInitializer {
 
     @Override
     public void onInitialize() {
+
+        ServerConfigurationConnectionEvents.BEFORE_CONFIGURE.register(new PlayerConnectionHadler());
+
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(Commands.literal("fakeplayerapi")
                 .requires(source -> Permissions.check(source, "gamescapes.developer.fakeplayerapi", 2))

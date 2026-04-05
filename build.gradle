@@ -48,7 +48,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     
     // Command Permissions API
-    modImplementation "me.lucko:fabric-permissions-api:0.3.3"
+    modImplementation "me.lucko:fabric-permissions-api:0.6.0"
 }
 
 processResources {
