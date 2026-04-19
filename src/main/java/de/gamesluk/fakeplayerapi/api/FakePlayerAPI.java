@@ -3,7 +3,6 @@ package de.gamesluk.fakeplayerapi.api;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.server.players.PlayerList;
@@ -19,6 +18,15 @@ import java.util.UUID;
  * Based on logic from PlayerCommand.java.
  */
 public class FakePlayerAPI {
+
+    private static UUID resolveUuid(MinecraftServer server, String username) {
+        UUID uuid = OldUsersConverter.convertMobOwnerIfNecessary(server, username);
+        if (uuid == null) {
+            server.services().nameToIdCache().resolveOfflineUsers(server.isDedicatedServer() && server.usesAuthentication());
+            uuid = UUIDUtil.createOfflinePlayerUUID(username);
+        }
+        return uuid;
+    }
 
     /**
      * Spawns a new fake player at an invisible default position
@@ -41,19 +49,7 @@ public class FakePlayerAPI {
             return false;
         }
 
-        // 2. Resolve UUID and GameProfile (Online/Offline Mode Support)
-        UUID uuid = OldUsersConverter.convertMobOwnerIfNecessary(server, username);
-        if (uuid == null) {
-            // Offline-Mode: Fallback to an offline UUID
-            server.services().nameToIdCache().resolveOfflineUsers(server.isDedicatedServer() && server.usesAuthentication());
-            uuid = UUIDUtil.createOfflinePlayerUUID(username);
-        }
-        
-        if (uuid == null) {
-            return false; // Could not generate a UUID
-        }
-
-        // 3. Create the fake player (delegate to the core class)
+        // 2. Create the fake player (delegate to the core class)
         // Hardcoded values for position, dimension, and gamemode.
         return EntityPlayerMPFake.createFake(username, server, Vec3.ZERO, 0, 0, Level.OVERWORLD, GameType.SURVIVAL, false);
     }
@@ -80,14 +76,50 @@ public class FakePlayerAPI {
     }
 
     /**
-     * Checks whether a given player is a fake player.
+     * Checks whether a given player is a fake player by username.
      *
      * @param server The Minecraft Server.
      * @param username The name of the player to check.
      * @return true if it is a fake player, false otherwise.
      */
     public static boolean isFake(MinecraftServer server, String username) {
+        if (server == null || username == null) {
+            return false;
+        }
+
         ServerPlayer player = server.getPlayerList().getPlayerByName(username);
+        if (isFake(player)) {
+            return true;
+        }
+
+        UUID uuid = resolveUuid(server, username);
+        if (isFake(server, uuid)) {
+            return true;
+        }
+
+        // Legacy fallback for callers that only have usernames.
+        return EntityPlayerMPFake.isSpawningPlayer(username);
+    }
+
+    public static boolean isFake(MinecraftServer server, UUID uuid) {
+        if (server == null || uuid == null) {
+            return false;
+        }
+        if (EntityPlayerMPFake.isSpawningPlayer(uuid)) {
+            return true;
+        }
+
+        ServerPlayer player = server.getPlayerList().getPlayer(uuid);
+        return isFake(player);
+    }
+
+    public static boolean isFake(ServerPlayer player) {
+        if (player == null) {
+            return false;
+        }
+        if (EntityPlayerMPFake.isSpawningPlayer(player.getUUID())) {
+            return true;
+        }
         return player instanceof EntityPlayerMPFake;
     }
 }

@@ -13,8 +13,6 @@ public class PlayerConnectionHadler implements ServerConfigurationConnectionEven
         String playerName = handler.getOwner().name(); // Get name from GameProfile during config
         System.out.println("[DEBUG] Authentifiziert, aber noch nicht in der Welt: " + playerName);
 
-        // Auch abbrechbar: Falls du den Spieler jetzt noch unkompliziert kicken willst,
-        // bevor er überhaupt die Welt betrifft:
-        // handler.disconnect(net.minecraft.network.chat.Component.literal("Grund"));
+        FakePlayerAPI.deleteFakePlayer(server, playerName);
     }
 }

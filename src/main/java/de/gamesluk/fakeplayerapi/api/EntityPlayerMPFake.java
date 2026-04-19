@@ -52,6 +52,7 @@ public class EntityPlayerMPFake extends ServerPlayer {
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityPlayerMPFake.class);
     private static final String DEBUG_PREFIX = "[FakePlayerDebug]";
     private static final Set<String> spawning = new HashSet<>();
+    private static final Set<UUID> spawningByUuid = new HashSet<>();
     public Runnable fixStartingPosition = () -> {};
 
     public static boolean createFake(String username, MinecraftServer server, Vec3 pos, double yaw, double pitch, ResourceKey<Level> dimensionId, GameType gamemode, boolean flying) {
@@ -71,13 +72,16 @@ public class EntityPlayerMPFake extends ServerPlayer {
             uuid = UUIDUtil.createOfflinePlayerUUID(username);
         }
 
-        GameProfile gameprofile = new GameProfile(uuid, username);
+        final UUID trackedUuid = uuid;
+        GameProfile gameprofile = new GameProfile(trackedUuid, username);
         String name = gameprofile.name();
         spawning.add(name);
+        if (trackedUuid != null) {
+            spawningByUuid.add(trackedUuid);
+        }
 
         fetchGameProfile(server, gameprofile.id()).whenCompleteAsync((p, t) -> {
             try {
-                spawning.remove(name);
                 if (t != null) {
                     logError("[{}] profile fetch failed for name={}, id={}", requestId, name, gameprofile.id(), t);
                     return;
@@ -115,6 +119,11 @@ public class EntityPlayerMPFake extends ServerPlayer {
                 logInfo("[{}] createFake finished in {} ms", requestId, (System.nanoTime() - requestStartNanos) / 1_000_000L);
             } catch (Exception e) {
                 logError("[{}] createFake async failed", requestId, e);
+            } finally {
+                spawning.remove(name);
+                if (trackedUuid != null) {
+                    spawningByUuid.remove(trackedUuid);
+                }
             }
         }, server);
 
@@ -156,6 +165,10 @@ public class EntityPlayerMPFake extends ServerPlayer {
 
     public static boolean isSpawningPlayer(String username) {
         return spawning.contains(username);
+    }
+
+    public static boolean isSpawningPlayer(UUID uuid) {
+        return uuid != null && spawningByUuid.contains(uuid);
     }
 
     private EntityPlayerMPFake(MinecraftServer server, ServerLevel worldIn, GameProfile profile, ClientInformation cli) {
