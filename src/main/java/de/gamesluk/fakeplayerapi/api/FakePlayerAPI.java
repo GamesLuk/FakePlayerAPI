@@ -50,8 +50,8 @@ public class FakePlayerAPI {
         }
 
         // 2. Create the fake player (delegate to the core class)
-        // Hardcoded values for position, dimension, and gamemode.
-        return EntityPlayerMPFake.createFake(username, server, Vec3.ZERO, 0, 0, Level.OVERWORLD, GameType.SURVIVAL, false);
+        EntityPlayerMPFake.createFake(username, server, Vec3.ZERO, 0, 0, Level.OVERWORLD, GameType.SURVIVAL, false);
+        return true;
     }
 
     /**
@@ -88,28 +88,6 @@ public class FakePlayerAPI {
         }
 
         ServerPlayer player = server.getPlayerList().getPlayerByName(username);
-        if (isFake(player)) {
-            return true;
-        }
-
-        UUID uuid = resolveUuid(server, username);
-        if (isFake(server, uuid)) {
-            return true;
-        }
-
-        // Legacy fallback for callers that only have usernames.
-        return EntityPlayerMPFake.isSpawningPlayer(username);
-    }
-
-    public static boolean isFake(MinecraftServer server, UUID uuid) {
-        if (server == null || uuid == null) {
-            return false;
-        }
-        if (EntityPlayerMPFake.isSpawningPlayer(uuid)) {
-            return true;
-        }
-
-        ServerPlayer player = server.getPlayerList().getPlayer(uuid);
         return isFake(player);
     }
 
@@ -117,7 +95,7 @@ public class FakePlayerAPI {
         if (player == null) {
             return false;
         }
-        if (EntityPlayerMPFake.isSpawningPlayer(player.getUUID())) {
+        if (EntityPlayerMPFake.isSpawningPlayer(player.getGameProfile().name())) {
             return true;
         }
         return player instanceof EntityPlayerMPFake;
